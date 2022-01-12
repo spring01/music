@@ -1,0 +1,15 @@
+{
+  "name": "playlist",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Haichen Li",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "aws-sdk": "^2.1055.0",
+    "googleapis": "^92.0.0"
+  }
+}

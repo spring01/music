@@ -3,3 +3,5 @@ node_modules
 .ask/ask-states.json
 .ask/lambda/
 skill-package/skill.json
+playlist/catalog.json
+playlist/links.json
