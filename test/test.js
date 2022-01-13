@@ -61,6 +61,69 @@ describe('Music', function () {
     });
   });
 
+  describe('GetPlayableContent playlist', function () {
+    const event = {
+        "header": {
+            "messageId": "",
+            "namespace": "Alexa.Media.Search",
+            "name": "GetPlayableContent",
+            "payloadVersion": "1.0"
+        },
+        "payload": {
+            "requestContext": {
+                "user": {
+                    "id": "",
+                    "accessToken": null
+                },
+                "location": {
+                    "originatingLocale": "en-US",
+                    "countryCode": "US"
+                }
+            },
+            "filters": {
+                "explicitLanguageAllowed": true
+            },
+            "selectionCriteria": {
+                "attributes": [
+                    {
+                        "type": "PLAYLIST",
+                        "entityId": "classical"
+                    },
+                    {
+                        "type": "MEDIA_TYPE",
+                        "value": "PLAYLIST"
+                    }
+                ]
+            },
+            "responseOptions": null,
+            "experience": null
+        }
+    };
+    const promise = skill.handler(event);
+    it('should return correct header namespace', async function() {
+      const response = await promise;
+      assert.equal(response.header.namespace, "Alexa.Media.Search");
+    });
+    it('should return correct header name', async function() {
+      const response = await promise;
+      assert.equal(response.header.name, "GetPlayableContent.Response");
+    });
+    it('should return valid content id', async function() {
+      const response = await promise;
+      assert.notEqual(response.payload.content.id, "");
+      assert.notEqual(response.payload.content.id, null);
+    });
+    it('should return correct metadata type', async function() {
+      const response = await promise;
+      assert.equal(response.payload.content.metadata.type, "PLAYLIST");
+    });
+    it('should display correctly', async function() {
+      const response = await promise;
+      assert.notEqual(response.payload.content.metadata.name.speech.text, "");
+      assert.notEqual(response.payload.content.metadata.name.display, null);
+    });
+  });
+
   describe("Initiate all music queue", function () {
     const event = {
         "header": {

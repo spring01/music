@@ -9,7 +9,8 @@
   "author": "Haichen Li",
   "license": "Apache 2.0",
   "dependencies": {
-    "ytdl-core": "4.9.2"
+    "ytdl-core": "4.9.2",
+    "googleapis": "^92.0.0"
   },
   "devDependencies": {
     "aws-sdk": "^2.547.0"

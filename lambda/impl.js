@@ -14,6 +14,7 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
 const AWS = require('aws-sdk');
+const { google } = require('googleapis');
 const ytdl = require('./ytdl');
 
 class Handler {
@@ -32,6 +33,17 @@ class GetPlayableContent extends Handler {
     if (attributes.length == 1 && attributes[0].type == 'MEDIA_TYPE'
         && attributes[0].value == 'TRACK') {
       return allMusicQueue;
+    }
+    const mediaType = attributes.find(({ type }) => {
+      return type === 'MEDIA_TYPE';
+    });
+    const entity = attributes.find(({ type }) => {
+      return type === mediaType.value;
+    });
+    if (mediaType.value == 'PLAYLIST') {
+      const queue = new PlaylistQueue(entity.entityId);
+      await queue.initialize();
+      return queue;
     }
   }
   async buildPayload(event, queue) {
@@ -142,6 +154,61 @@ class AllMusicQueue {
 }
 
 const allMusicQueue = new AllMusicQueue();
+
+const youtube = google.youtube('v3');
+
+class PlaylistQueue {
+  constructor(name) {
+    name = name.toLowerCase();
+    this.id = name;
+    this.name = name;
+    this.isFinished = false;  // TODO: implement non-repeating
+  }
+  async initialize() {
+    const playlist = await this.readPlaylistFromDb();
+    const title = playlist.title;
+    const link = playlist.link;
+    const [prefix, playlistId] = link.split('playlist?list=');
+    const results = await youtube.playlistItems.list({
+      key: process.env.GOOGLE_API_KEY,
+      part: 'id,snippet',
+      playlistId: playlistId,
+      maxResults: 50,
+    });
+    const songLinks = results.data.items.map(item => {
+      const musicId = item.snippet.resourceId.videoId;
+      return `https://music.youtube.com/watch?v=${musicId}`
+    });
+    shuffle(songLinks);  // TODO: implement non-shuffling
+    await this.writePlaylistToDb({title, link, songLinks});
+  }
+  async getInitial() {
+  }
+  async getNext(currentId) {
+  }
+  async getPrevious(currentId) {
+  }
+  async readPlaylistFromDb() {
+    return db.queryOneEntryAsync({
+      TableName: 'WebPlaylist',
+      KeyConditionExpression: 'title = :title',
+      ExpressionAttributeValues: {':title': this.name},
+    });
+  }
+  async writePlaylistToDb(item) {
+    return db.putAsync({
+      TableName: 'WebPlaylist',
+      Item: item,
+    });
+  }
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 async function resolveLink(link) {
   const info = await ytdl.getInfo(link);
