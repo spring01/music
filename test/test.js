@@ -199,6 +199,82 @@ describe('Music', function () {
     });
   });
 
+  describe("Initiate playlist queue", function () {
+    const event = {
+        "header": {
+            "messageId": "",
+            "namespace": "Alexa.Media.Playback",
+            "name": "Initiate",
+            "payloadVersion": "1.0"
+        },
+        "payload": {
+            "requestContext": {
+                "user": {
+                    "id": "",
+                    "accessToken": null
+                },
+                "location": {
+                    "originatingLocale": "en-US",
+                    "countryCode": "US",
+                    "timeZone": "America/Los_Angeles"
+                }
+            },
+            "playbackModes": {
+                "shuffle": false,
+                "loop": false,
+                "repeat": null
+            },
+            "currentItemReference": null,
+            "contentId": "classical",
+            "filters": {
+                "explicitLanguageAllowed": true
+            },
+            "experience": null
+        }
+    };
+    const promise = skill.handler(event);
+    it('should return correct header namespace', async function() {
+      const response = await promise;
+      assert.equal(response.header.namespace, "Alexa.Media.Playback");
+    });
+    it('should return correct header name', async function() {
+      const response = await promise;
+      assert.equal(response.header.name, "Initiate.Response");
+    });
+    it('should return valid playbackMethod id', async function() {
+      const response = await promise;
+      assert.notEqual(response.payload.playbackMethod.id, "");
+      assert.notEqual(response.payload.playbackMethod.id, null);
+    });
+    it('should return valid firstItem id', async function() {
+      const response = await promise;
+      assert.notEqual(response.payload.playbackMethod.firstItem.id, "");
+      assert.notEqual(response.payload.playbackMethod.firstItem.id, null);
+    });
+    it('should return correct metadata type', async function() {
+      const response = await promise;
+      assert.equal(response.payload.playbackMethod.firstItem.metadata.type, "TRACK");
+    });
+    it('should display correctly', async function() {
+      const response = await promise;
+      const metadata = response.payload.playbackMethod.firstItem.metadata;
+      const authorName = metadata.authors[0].name
+      assert.notEqual(authorName.speech.text, "");
+      assert.equal(authorName.speech.text, authorName.display);
+      const albumName = metadata.album.name
+      assert.notEqual(albumName.speech.text, "");
+      assert.equal(albumName.speech.text, albumName.display);
+    });
+    it('should return valid stream', async function() {
+      const response = await promise;
+      const firstItem = response.payload.playbackMethod.firstItem;
+      const stream = firstItem.stream;
+      assert.equal(stream.id, firstItem.id);
+      assert.notEqual(stream.uri, null);
+      assert.notEqual(stream.uri, "");
+    });
+  });
+
   describe("GetNextItem all music queue", function () {
     const event = {
         "header": {
