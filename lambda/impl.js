@@ -72,6 +72,8 @@ class PlayQueueHandler extends Handler {
   async getQueue(event) {
     if (event.payload.currentItemReference.queueId === allMusicQueue.id) {
       return allMusicQueue;
+    } else {
+      return new PlaylistQueue(event.payload.currentItemReference.queueId);
     }
   }
   async buildPayload(event, queue) {
@@ -203,8 +205,15 @@ class PlaylistQueue {
     return this.fetchEntry(playlist, 0);
   }
   async getNext(currentId) {
+    const playlist = await this.readPlaylistFromDb();
+    const id = (parseInt(currentId) + 1) % playlist.songLinks.length;
+    return this.fetchEntry(playlist, id);
   }
   async getPrevious(currentId) {
+    const playlist = await this.readPlaylistFromDb();
+    const numSongs = playlist.songLinks.length;
+    const id = (numSongs + parseInt(currentId) - 1) % numSongs;
+    return this.fetchEntry(playlist, id);
   }
   async readPlaylistFromDb() {
     return db.queryOneEntryAsync({
