@@ -183,7 +183,7 @@ class PlaylistQueue {
     this.isFinished = false;  // TODO: implement non-repeating
   }
   async initialize() {
-    const playlist = await this.readPlaylistFromDb();
+    const playlist = await this.readPlaylistFromDb('WebPlaylist');
     const title = playlist.title;
     const link = playlist.link;
     const [prefix, playlistId] = link.split('playlist?list=');
@@ -215,16 +215,16 @@ class PlaylistQueue {
     const id = (numSongs + parseInt(currentId) - 1) % numSongs;
     return this.fetchEntry(playlist, id);
   }
-  async readPlaylistFromDb() {
+  async readPlaylistFromDb(tableName = 'PlaylistMusics') {
     return db.queryOneEntryAsync({
-      TableName: 'WebPlaylist',
+      TableName: tableName,
       KeyConditionExpression: 'title = :title',
       ExpressionAttributeValues: {':title': this.name},
     });
   }
   async writePlaylistToDb(item) {
     return db.putAsync({
-      TableName: 'WebPlaylist',
+      TableName: 'PlaylistMusics',
       Item: item,
     });
   }
