@@ -41,9 +41,6 @@ exports.getInfo = async(id, options) => {
 
   let results = await Promise.all(funcs);
   info.formats = Object.values(Object.assign({}, ...results));
-  info.formats = info.formats.map(formatUtils.addFormatMeta);
-  info.formats.sort(formatUtils.sortFormats);
-  info.full = true;
   return info;
 };
 

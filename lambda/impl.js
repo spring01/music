@@ -143,7 +143,8 @@ class AllMusicQueue {
   async getResolvedEntryAsync(currentId, scanForward = true) {
     const entry = await this.queryOneEntryAsync(currentId, scanForward);
     const [artist, album, title] = entry.ArtistAlbumTitle.split(DELIM);
-    const uri = await resolveLink(entry.Link);
+    const info = await ytdl.getInfo(entry.Link);
+    const uri = info.formats[0].url;
     return new Entry(entry.ArtistAlbumTitle, artist, album, title, uri);
   }
   async queryOneEntryAsync(currentId, scanForward) {
@@ -216,11 +217,14 @@ class PlaylistQueue {
     return this.fetchEntry(playlist, id);
   }
   async readPlaylistFromDb(tableName = 'PlaylistMusics') {
-    return db.queryOneEntryAsync({
+    console.time('TIME readPlaylistFromDb');
+    const result = await db.queryOneEntryAsync({
       TableName: tableName,
       KeyConditionExpression: 'title = :title',
       ExpressionAttributeValues: {':title': this.name},
     });
+    console.timeEnd('TIME readPlaylistFromDb');
+    return result;
   }
   async writePlaylistToDb(item) {
     return db.putAsync({
@@ -230,7 +234,9 @@ class PlaylistQueue {
   }
   async fetchEntry(playlist, id) {
     const link = playlist.songLinks[id];
+    console.time('TIME ytdl.getInfo');
     const info = await ytdl.getInfo(link);
+    console.timeEnd('TIME ytdl.getInfo');
     const {artist, album, title} = parseMetadata(info);
     return new Entry(id.toString(), artist, album, title, info.formats[0].url);
   }
@@ -283,14 +289,6 @@ function parseMetadata(info) {
     title = 'unknown';
   }
   return {artist, album, title};
-}
-
-async function resolveLink(link) {
-  const info = await ytdl.getInfo(link);
-  const audios = info.formats.filter(fmt => fmt.hasAudio && !fmt.hasVideo);
-  const biggest = audios.reduce(
-      (f0, f1) => (f0.audioBitrate > f1.audioBitrate) ? f0 : f1);
-  return biggest.url;
 }
 
 function hash(value) {
