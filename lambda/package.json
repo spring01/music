@@ -1,6 +1,6 @@
 {
   "name": "music",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,10 +9,10 @@
   "author": "Haichen Li",
   "license": "Apache 2.0",
   "dependencies": {
-    "ytdl-core": "4.9.2",
-    "googleapis": "^92.0.0"
+    "ytdl-core": "4.11.0",
+    "googleapis": "^96.0.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.547.0"
+    "aws-sdk": "^2.1092.0"
   }
 }

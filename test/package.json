@@ -1,6 +1,6 @@
 {
   "name": "music-test",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "test.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "Haichen Li",
   "license": "Apache 2.0",
   "dependencies": {
-    "aws-sdk": "^2.1053.0",
-    "ytdl-core": "4.9.2",
-    "mocha": "^9.1.3"
+    "aws-sdk": "^2.1092.0",
+    "ytdl-core": "4.11.0",
+    "mocha": "^9.2.2"
   }
 }
