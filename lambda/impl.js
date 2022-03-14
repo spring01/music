@@ -268,15 +268,21 @@ function parseMetadata(info) {
       album = lines[4];
     }
   } else {
-    if (description) {
-      title = description.replace(/(\r\n|\n|\r)/gm, '; ');
+    if (videoDetails.author) {
+      if (videoDetails.author.name) {
+        artist = videoDetails.author.name;
+      }
     }
     if (videoDetails.title) {
-      artist = title;
       title = videoDetails.title;
-    } else if (videoDetails.media) {
-      artist = videoDetails.media.artist;
-      title = videoDetails.media.song;
+    }
+    if (videoDetails.media) {
+      if (!artist) {
+        artist = videoDetails.media.artist;
+      }
+      if (!title) {
+        title = videoDetails.media.song;
+      }
     }
   }
   if (!artist) {
