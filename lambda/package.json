@@ -1,6 +1,6 @@
 {
   "name": "music",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,9 +10,9 @@
   "license": "Apache 2.0",
   "dependencies": {
     "ytdl-core": "4.11.0",
-    "googleapis": "^96.0.0"
+    "googleapis": "^100.0.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.1092.0"
+    "aws-sdk": "^2.1120.0"
   }
 }
