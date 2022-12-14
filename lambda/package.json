@@ -9,7 +9,7 @@
   "author": "Haichen Li",
   "license": "Apache 2.0",
   "dependencies": {
-    "ytdl-core": "4.11.0",
+    "ytdl-core": "4.11.2",
     "googleapis": "^100.0.0"
   },
   "devDependencies": {
