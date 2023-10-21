@@ -22,7 +22,7 @@ async function main() {
         console.error(`Found too many playlists (${numList}).`);
         return;
       }
-      const title = playlist.data.items[0].snippet.title.toLowerCase();
+      const title = playlist.data.items[0].snippet.title;
       names.push(title);
       const params = {
         TableName: 'WebPlaylist',
